@@ -2,7 +2,7 @@ package grpc_zap
 
 import (
 	"context"
-	"github.com/MoeGolibrary/ctxzap"
+	"github.com/acrazing/ctxzap"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"

@@ -7,7 +7,7 @@ Bind zap to context, built-in support for grpc.
 1. Install
 
    ```bash
-   go get github.com/MoeGolibrary/ctxzap
+   go get github.com/acrazing/ctxzap
    ```
 
 2. Bootstrap

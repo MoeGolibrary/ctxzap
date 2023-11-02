@@ -3,7 +3,7 @@ package grpc_zap_test
 import (
 	"context"
 	"fmt"
-	"github.com/MoeGolibrary/ctxzap/grpc_zap"
+	"github.com/acrazing/ctxzap/grpc_zap"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc"
