@@ -2,18 +2,30 @@
 
 Bind zap to context, built-in support for grpc.
 
-## Quick start
-
-1. Install
+## Install
 
    ```bash
    go get github.com/acrazing/ctxzap
    ```
 
-2. Bootstrap
+## Quick start
 
-    ```go
+```go
+package main
+
+import (
+    "context"
+    "github.com/acrazing/ctxzap"
+    "github.com/acrazing/ctxzap/grpc_zap"
+    "go.uber.org/zap"
+    "google.golang.org/grpc"
+)
+
+func main() {
+	// get your logger
     logger := zap.NewExample()
+
+	// inject interceptors
     _ = grpc.NewServer(
         grpc.ChainUnaryInterceptor(
             grpc_zap.UnaryServerInterceptor(logger, grpc_zap.WithAccessLog(true, true)),
@@ -23,6 +35,7 @@ Bind zap to context, built-in support for grpc.
         ),
     )
 
+	// print log
     // In any context based method called by grpc servers
     _ = func(ctx context.Context) {
         // add a field to the context, this field will always be printed in the next
@@ -35,17 +48,8 @@ Bind zap to context, built-in support for grpc.
         // print a log
         ctxzap.Info(ctx, "call with data", zap.String("value", "2"))
     }
-
-    ```
-
-3. Logging
-
-    ```go
-    func (s xxxServer) Ping(ctx context.Context) (xxx, error) {
-        ctxzap.Info("Hello world", zap.String("id", "1"))
-    }
-
-    ```
+}
+```
 
 ## License
 
