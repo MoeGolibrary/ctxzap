@@ -3,6 +3,7 @@ package grpc_zap_test
 import (
 	"context"
 	"fmt"
+	"github.com/acrazing/ctxzap"
 	"github.com/acrazing/ctxzap/grpc_zap"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -30,6 +31,29 @@ func ExampleStreamServerInterceptor() {
 			grpc_zap.StreamServerInterceptor(logger, grpc_zap.WithEventLog(true, true)),
 		),
 	)
+
+	// In any context based method called by grpc servers
+	_ = func(ctx context.Context) {
+		// add a field to the context, this field will always be printed in the next
+		// log calls with the context.
+		ctxzap.AddFields(ctx, zap.String("data", "1"))
+
+		// replace an existing field or append it to the context
+		ctxzap.ReplaceField(ctx, zap.String("data", "2"))
+
+		// print a log
+		ctxzap.Info(ctx, "call with data", zap.String("value", "2"))
+	}
+}
+
+type testServer struct {
+	testpb.TestPingService
+}
+
+func (t *testServer) PingEmpty(ctx context.Context, req *testpb.PingEmptyRequest) (*testpb.PingEmptyResponse, error) {
+	ctxzap.AddFields(ctx, zap.String("methodName", "PingEmpty"))
+	ctxzap.Info(ctx, "PingEmpty", zap.String("payload", "{}"))
+	return t.TestPingService.PingEmpty(ctx, req)
 }
 
 func TestStreamServerInterceptor(t *testing.T) {
@@ -58,7 +82,7 @@ func TestStreamServerInterceptor(t *testing.T) {
 			grpc_zap.StreamServerInterceptor(logger, grpc_zap.WithEventLog(true, true), grpc_zap.WithMetadataFields("deviceID")),
 		),
 	)
-	testpb.RegisterTestServiceServer(server, &testpb.TestPingService{})
+	testpb.RegisterTestServiceServer(server, &testServer{})
 
 	go func() {
 		defer close(stopped)

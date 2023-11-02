@@ -23,6 +23,19 @@ Bind zap to context, built-in support for grpc.
         ),
     )
 
+    // In any context based method called by grpc servers
+    _ = func(ctx context.Context) {
+        // add a field to the context, this field will always be printed in the next
+        // log calls with the context.
+        ctxzap.AddFields(ctx, zap.String("data", "1"))
+
+        // replace an existing field or append it to the context
+        ctxzap.ReplaceField(ctx, zap.String("data", "2"))
+
+        // print a log
+        ctxzap.Info(ctx, "call with data", zap.String("value", "2"))
+    }
+
     ```
 
 3. Logging
